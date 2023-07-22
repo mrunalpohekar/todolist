@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color:antiquewhite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; 
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .task {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+        .task input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .task label {
+            flex-grow: 1;
+            color: #333;
+            font-size: 16px;
+        }
+        .task button {
+            background-color: black;
+            padding: 4px 8px;
+            margin-left: 10px;
+            font-size: 14px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        #pendingTasks,
+        #completedTasks {
+            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Todo List</h1>
+        <input type="text" id="taskInput" placeholder="Enter a new task...">
+        <button onclick="addTask()">Add Task</button>
+
+        <div id="pendingTasks">
+            <h2>Pending Tasks</h2>
+            <input type="text" class="search-input" id="searchPendingInput" placeholder="Search pending tasks..."
+                oninput="searchTasks('pendingList', this.value)">
+            <div id="pendingList"></div>
+        </div>
+
+        <div id="completedTasks">
+            <h2>Completed Tasks</h2>
+            <input type="text" class="search-input" id="searchCompletedInput" placeholder="Search completed tasks..."
+                oninput="searchTasks('completedList', this.value)">
+            <div id="completedList"></div>
+        </div>
+    </div>
+
+    <script>
+        function addTask() {
+            const newTaskText = document.getElementById("taskInput").value.trim();
+            if (newTaskText !== "") {
+                const listItem = document.createElement("div");
+                listItem.className = "task";
+                listItem.innerHTML = `
+                    <input type="checkbox" onchange="moveToCompleted(this)">
+                    <label>${newTaskText}</label>
+                    <button onclick="deleteTask(this)">Delete</button>
+                `;
+                document.getElementById("pendingList").appendChild(listItem);
+                document.getElementById("taskInput").value = "";
+            }
+        }
+        function moveToCompleted(checkbox) {
+            const taskItem = checkbox.parentNode;
+            document.getElementById("completedList").appendChild(taskItem);
+            checkbox.setAttribute("onchange", "moveToPending(this)");
+        }
+        function moveToPending(checkbox) {
+            const taskItem = checkbox.parentNode;
+            document.getElementById("pendingList").appendChild(taskItem);
+            checkbox.setAttribute("onchange", "moveToCompleted(this)");
+        }
+        function deleteTask(deleteButton) {
+            const taskItem = deleteButton.parentNode;
+            taskItem.remove();
+        }
+        function searchTasks(listId, searchText) {
+            const list = document.getElementById(listId);
+            const tasks = list.getElementsByClassName("task");
+            for (const task of tasks) {
+                const taskLabel = task.querySelector("label").textContent.toLowerCase();
+                if (taskLabel.includes(searchText.toLowerCase())) {
+                    task.style.display = "flex";
+                } else {
+                    task.style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
